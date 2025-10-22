@@ -151,6 +151,13 @@ const CourseNavigator = ({ modules = courseData }) => {
   );
   const [uploads, setUploads] = useState({});
 
+  // Calculate overall course completion percentage
+  const courseProgress = () => {
+    const totalLessons = completedLessons.reduce((sum, mod) => sum + mod.length, 0);
+    const completed = completedLessons.reduce((sum, mod) => sum + mod.filter(Boolean).length, 0);
+    return totalLessons === 0 ? 0 : Math.round((completed / totalLessons) * 100);
+  };
+
   const handleLessonClick = (lessonIdx) => {
     setActiveLesson(lessonIdx);
   };
@@ -189,8 +196,38 @@ const CourseNavigator = ({ modules = courseData }) => {
 
   return (
     <div style={Styles.container}>
-      {/* Sidebar Navigation */}
+      {/* Sidebar Navigation with Course Complete Indicator at the top */}
       <aside style={Styles.sidebar}>
+        {/* Compact Course Completion Bar */}
+        <div style={{
+          margin: '16px 0 24px 0',
+          padding: '8px 12px',
+          background: '#f3f4f6',
+          borderRadius: 8,
+          boxShadow: '0 1px 4px rgba(0,0,0,0.03)',
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+        }}>
+          <span style={{ fontWeight: 600, fontSize: 15, marginBottom: 4, color: '#6366f1' }}>Course Completion</span>
+          <div style={{
+            width: '100%',
+            height: 12,
+            background: '#e5e7eb',
+            borderRadius: 6,
+            overflow: 'hidden',
+            marginBottom: 2,
+          }}>
+            <div style={{
+              height: '100%',
+              width: `${courseProgress()}%`,
+              background: 'linear-gradient(90deg, #6366f1 0%, #60a5fa 100%)',
+              transition: 'width 0.7s cubic-bezier(.4,0,.2,1)',
+            }} />
+          </div>
+          <span style={{ fontSize: 13, color: '#374151' }}>{courseProgress()}%</span>
+        </div>
+        {/* Modules Navigation */}
         {modules.map((mod, modIdx) => (
           <div key={mod.name}>
             <div
