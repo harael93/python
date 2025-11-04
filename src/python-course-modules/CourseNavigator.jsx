@@ -167,17 +167,31 @@ const CourseNavigator = ({ modules = courseData, user, initialProgress }) => {
     }
     return modules.map((mod) => mod.lessons.map((lesson) => lesson.completed));
   });
+
+  // Track if initial progress has been loaded/applied
+  const [progressLoaded, setProgressLoaded] = useState(false);
+
+  useEffect(() => {
+    if (initialProgress != null) {
+      setCompletedLessons(getCompletedLessonsFromBackend(initialProgress));
+      setProgressLoaded(true);
+    } else {
+      setProgressLoaded(true);
+    }
+    // Only run on initialProgress change
+    // eslint-disable-next-line
+  }, [initialProgress]);
   const [uploads, setUploads] = useState({});
   // Post completedLessons to backend whenever it changes and user is logged in
   useEffect(() => {
     if (!user || !user.fullName) return;
-    // Always use user.fullName for progress API calls
+    if (!progressLoaded) return; // Don't post until initial progress is loaded
     fetch("https://dbworker.liquidsoliddesign.workers.dev/progress/save", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ user_id: user.fullName, progress: JSON.stringify(completedLessons) })
     });
-  }, [completedLessons, user]);
+  }, [completedLessons, user, progressLoaded]);
 
   // Calculate overall course completion percentage
   const courseProgress = () => {
