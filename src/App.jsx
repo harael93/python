@@ -10,26 +10,45 @@ function App() {
   const [showLogin, setShowLogin] = useState(false);
   const [user, setUser] = useState(null);
 
-  // Check for token and username on mount
+  // Check for token and full name on mount
   useEffect(() => {
     const token = localStorage.getItem("access_token");
-    const username = localStorage.getItem("username");
-    if (token && username) {
-      setUser({ username });
+    const fullName = localStorage.getItem("full_name");
+    if (token && fullName) {
+      setUser({ fullName });
     }
   }, []);
 
   // Handle login success from modal
-  const handleLoginSuccess = (username) => {
-    setUser({ username });
+  const handleLoginSuccess = async (username) => {
+    // Get access token from localStorage
+    const token = localStorage.getItem("access_token");
+    let fullName = username;
+    if (token) {
+      try {
+        const res = await fetch("https://0auth.deployedlogic.site/api/profile/", {
+          headers: { "Authorization": `Bearer ${token}` }
+        });
+        if (res.ok) {
+          const data = await res.json();
+          if (data.full_name) {
+            fullName = data.full_name;
+            localStorage.setItem("full_name", fullName);
+          }
+        }
+      } catch {
+        // Ignore profile fetch errors
+      }
+    }
+    setUser({ fullName });
     setShowLogin(false);
-    localStorage.setItem("username", username);
   };
 
   // Logout function
   const handleLogout = () => {
     localStorage.removeItem("access_token");
     localStorage.removeItem("username");
+    localStorage.removeItem("full_name");
     setUser(null);
   };
 
@@ -44,7 +63,7 @@ function App() {
         <p style={{ fontSize: 16, color: '#374151', margin: 0 }}>several projects and resources on the basics</p>
         {user ? (
           <>
-            <div style={{ marginTop: 12, fontWeight: 600, fontSize: 16, color: '#6366f1' }}>Welcome, {user.username}!</div>
+            <div style={{ marginTop: 12, fontWeight: 600, fontSize: 16, color: '#6366f1' }}>Welcome, {user.fullName}!</div>
             <button onClick={handleLogout} style={{ marginTop: 8, padding: '8px 18px', background: '#dc2626', color: '#fff', border: 'none', borderRadius: 6, fontWeight: 600, fontSize: 16, cursor: 'pointer' }}>Logout</button>
           </>
         ) : (
