@@ -276,8 +276,14 @@ const CourseNavigator = ({ modules = courseData, user, initialProgress }) => {
               style={{
                 ...Styles.moduleTitle,
                 background: modIdx === activeModule ? "#e0e7ff" : "#f3f4f6",
+                opacity: modIdx === 0 || (user && user.fullName) ? 1 : 0.5,
+                cursor: modIdx === 0 || (user && user.fullName) ? "pointer" : "not-allowed"
               }}
-              onClick={() => handleModuleClick(modIdx)}
+              onClick={() => {
+                if (modIdx === 0 || (user && user.fullName)) {
+                  handleModuleClick(modIdx);
+                }
+              }}
             >
               {mod.name}
               <div style={Styles.progressBarWrap}>
@@ -286,7 +292,7 @@ const CourseNavigator = ({ modules = courseData, user, initialProgress }) => {
               </div>
             </div>
             {/* Lessons */}
-            {modIdx === activeModule && (
+            {modIdx === activeModule && (modIdx === 0 || (user && user.fullName)) ? (
               <ul style={Styles.lessonList}>
                 {mod.lessons.map((lesson, lessonIdx) => (
                   <li
@@ -304,7 +310,11 @@ const CourseNavigator = ({ modules = courseData, user, initialProgress }) => {
                   </li>
                 ))}
               </ul>
-            )}
+            ) : modIdx === activeModule ? (
+              <div style={{ padding: 24, color: '#dc2626', fontWeight: 600 }}>
+                Please log in to access this module.
+              </div>
+            ) : null}
           </div>
         ))}
       </aside>
