@@ -175,7 +175,7 @@ const CourseNavigator = ({ modules = courseData, user, initialProgress }) => {
     fetch("https://dbworker.liquidsoliddesign.workers.dev/progress/save", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ user_id: user.fullName, completedLessons: JSON.stringify(completedLessons) })
+      body: JSON.stringify({ user_id: user.fullName, progress: JSON.stringify(completedLessons) })
     });
   }, [completedLessons, user]);
 
