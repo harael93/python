@@ -48,8 +48,8 @@ function App() {
       const resp = await fetch(`https://dbworker.liquidsoliddesign.workers.dev/progress/get?user_id=${encodeURIComponent(fullName)}`);
       if (resp.ok) {
         const data = await resp.json();
-        if (data.progress != null) {
-          setInitialProgress(data.progress);
+        if (data.completedLessons != null) {
+          setInitialProgress(data.completedLessons);
         } else {
           setInitialProgress(null);
         }
