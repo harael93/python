@@ -65,6 +65,7 @@ function App() {
     localStorage.removeItem("username");
     localStorage.removeItem("full_name");
     setUser(null);
+    window.location.reload();
   };
 
   return (
