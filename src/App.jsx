@@ -6,9 +6,9 @@ import UsersModal from './users.jsx';
 
 
 function App() {
-
   const [showLogin, setShowLogin] = useState(false);
   const [user, setUser] = useState(null);
+  const [initialProgress, setInitialProgress] = useState(null);
 
   // Check for token and full name on mount
   useEffect(() => {
@@ -42,6 +42,21 @@ function App() {
     }
     setUser({ fullName });
     setShowLogin(false);
+
+    // Fetch progress from backend
+    try {
+      const resp = await fetch(`https://dbworker.liquidsoliddesign.workers.dev/progress/get?user_id=${encodeURIComponent(fullName)}`);
+      if (resp.ok) {
+        const data = await resp.json();
+        if (data.progress != null) {
+          setInitialProgress(data.progress);
+        } else {
+          setInitialProgress(null);
+        }
+      }
+    } catch {
+      setInitialProgress(null);
+    }
   };
 
   // Logout function
@@ -70,7 +85,7 @@ function App() {
           <button onClick={() => setShowLogin(true)} style={{ marginTop: 12, padding: '8px 18px', background: '#6366f1', color: '#fff', border: 'none', borderRadius: 6, fontWeight: 600, fontSize: 16, cursor: 'pointer' }}>Login / Create Account</button>
         )}
       </header>
-      <CourseNavigator />
+  <CourseNavigator user={user} initialProgress={initialProgress} />
       <UsersModal show={showLogin} onClose={() => setShowLogin(false)} onLoginSuccess={handleLoginSuccess} />
     </>
   )

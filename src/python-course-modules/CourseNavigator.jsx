@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import moduleSixIntro from './module-6-flask-react/README.md?raw';
 import lessonSixOne from './module-6-flask-react/lesson-01-architecture.md?raw';
 import lessonSixTwo from './module-6-flask-react/lesson-02-setup-projects.md?raw';
@@ -143,13 +143,45 @@ const courseData = [
   },
 ];
 
-const CourseNavigator = ({ modules = courseData }) => {
+const CourseNavigator = ({ modules = courseData, user, initialProgress }) => {
   const [activeModule, setActiveModule] = useState(0);
   const [activeLesson, setActiveLesson] = useState(0);
-  const [completedLessons, setCompletedLessons] = useState(
-    modules.map((mod) => mod.lessons.map((lesson) => lesson.completed))
-  );
+  // Helper to initialize completedLessons from progress percent
+  function getCompletedLessonsFromProgress(progress) {
+    // progress is percent (0-100)
+    const totalLessons = modules.reduce((sum, mod) => sum + mod.lessons.length, 0);
+    const completedCount = Math.round((progress / 100) * totalLessons);
+    let left = completedCount;
+    return modules.map((mod) =>
+      mod.lessons.map(() => {
+        if (left > 0) {
+          left--;
+          return true;
+        }
+        return false;
+      })
+    );
+  }
+
+  const [completedLessons, setCompletedLessons] = useState(() => {
+    if (initialProgress != null) {
+      return getCompletedLessonsFromProgress(Number(initialProgress));
+    }
+    return modules.map((mod) => mod.lessons.map((lesson) => lesson.completed));
+  });
   const [uploads, setUploads] = useState({});
+  // Post progress to backend whenever completedLessons changes and user is logged in
+  useEffect(() => {
+    if (!user || !user.fullName) return;
+    const totalLessons = completedLessons.reduce((sum, mod) => sum + mod.length, 0);
+    const completed = completedLessons.reduce((sum, mod) => sum + mod.filter(Boolean).length, 0);
+    const progress = totalLessons === 0 ? 0 : Math.round((completed / totalLessons) * 100);
+    fetch("https://dbworker.liquidsoliddesign.workers.dev/progress/save", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ user_id: user.fullName, progress })
+    });
+  }, [completedLessons, user]);
 
   // Calculate overall course completion percentage
   const courseProgress = () => {
