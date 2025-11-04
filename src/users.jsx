@@ -2,7 +2,7 @@ import React, { useState } from "react";
 
 const API_BASE = "https://0auth.deployedlogic.site/api"; // OAuth/Django backend
 
-function UsersModal({ show, onClose }) {
+function UsersModal({ show, onClose, onLoginSuccess }) {
 	const [tab, setTab] = useState("login");
 	const [loginData, setLoginData] = useState({ username: "", password: "" });
 	const [registerData, setRegisterData] = useState({ username: "", email: "", password: "" });
@@ -30,6 +30,9 @@ function UsersModal({ show, onClose }) {
 			if (res.ok && data.access) {
 				localStorage.setItem("access_token", data.access);
 				setSuccess("Login successful!");
+				if (typeof onLoginSuccess === "function") {
+					onLoginSuccess(loginData.username);
+				}
 				onClose();
 			} else {
 				setError(data.detail || "Login failed");
