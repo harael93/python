@@ -171,6 +171,7 @@ const CourseNavigator = ({ modules = courseData, user, initialProgress }) => {
   // Post completedLessons to backend whenever it changes and user is logged in
   useEffect(() => {
     if (!user || !user.fullName) return;
+    // Always use user.fullName for progress API calls
     fetch("https://dbworker.liquidsoliddesign.workers.dev/progress/save", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
