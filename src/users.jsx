@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 
-const API_BASE = "https://0auth.deployedlogic.site/api"; // OAuth/Django backend
+const API_BASE = "https://cloudflareauth.liquidsoliddesign.workers.dev/api"; // Cloudflare Worker backend
 
 function UsersModal({ show, onClose, onLoginSuccess }) {
 	const [tab, setTab] = useState("login");
@@ -46,7 +46,7 @@ function UsersModal({ show, onClose, onLoginSuccess }) {
 		e.preventDefault();
 		setError(""); setSuccess("");
 		try {
-			const res = await fetch(`${API_BASE}/register/`, {
+			const res = await fetch(`${API_BASE}/register`, {
 				method: "POST",
 				headers: { "Content-Type": "application/json" },
 				body: JSON.stringify(registerData),
