@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 
-const API_BASE = "https://0auth.deployedlogic.site/api"; // Updated to new backend
+const API_BASE = "https://0auth.deployedlogic.site/api";
 
 function UsersModal({ show, onClose, onLoginSuccess }) {
 	const [tab, setTab] = useState("login");
@@ -21,7 +21,7 @@ function UsersModal({ show, onClose, onLoginSuccess }) {
 		e.preventDefault();
 		setError(""); setSuccess("");
 		try {
-			const res = await fetch(`${API_BASE}/token/`, {
+			const res = await fetch(`${API_BASE}/login`, {
 				method: "POST",
 				headers: { "Content-Type": "application/json" },
 				body: JSON.stringify(loginData),
