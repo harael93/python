@@ -21,12 +21,7 @@ function UsersModal({ show, onClose, onLoginSuccess }) {
 		e.preventDefault();
 		setError(""); setSuccess("");
 		try {
-			// Preflight OPTIONS request for CORS/debugging
-			await fetch(`${API_BASE}/token`, {
-				method: "OPTIONS",
-				headers: { "Content-Type": "application/json" },
-			});
-			const res = await fetch(`${API_BASE}/token`, {
+			const res = await fetch(`${API_BASE}/token/`, {
 				method: "POST",
 				headers: { "Content-Type": "application/json" },
 				body: JSON.stringify(loginData),
@@ -51,7 +46,7 @@ function UsersModal({ show, onClose, onLoginSuccess }) {
 		e.preventDefault();
 		setError(""); setSuccess("");
 		try {
-			const res = await fetch(`${API_BASE}/register`, {
+			const res = await fetch(`${API_BASE}/register/`, {
 				method: "POST",
 				headers: { "Content-Type": "application/json" },
 				body: JSON.stringify(registerData),
