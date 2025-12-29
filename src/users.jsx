@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 
-const API_BASE = "https://cloudflareauth.liquidsoliddesign.workers.dev/api"; // Cloudflare Worker backend
+const API_BASE = "https://0auth.deployedlogic.site/api"; // Updated to new backend
 
 function UsersModal({ show, onClose, onLoginSuccess }) {
 	const [tab, setTab] = useState("login");
