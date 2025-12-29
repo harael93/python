@@ -21,6 +21,11 @@ function UsersModal({ show, onClose, onLoginSuccess }) {
 		e.preventDefault();
 		setError(""); setSuccess("");
 		try {
+			// Preflight OPTIONS request for CORS/debugging
+			await fetch(`${API_BASE}/token`, {
+				method: "OPTIONS",
+				headers: { "Content-Type": "application/json" },
+			});
 			const res = await fetch(`${API_BASE}/token`, {
 				method: "POST",
 				headers: { "Content-Type": "application/json" },
